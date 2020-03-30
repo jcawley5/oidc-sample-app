@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  h1= title
+
+  table(class='fd-table')
+    thead(class='fd-table__header')
+      tr(class='fd-table__row')
+        th(class='fd-table__cell') Order ID
+        th(class='fd-table__cell') Description
+        th(class='fd-table__cell') Amount
+    tbody(class='fd-table__body')
+      each ord in data
+        tr(class='fd-table__row')
+          td(class='fd-table__cell') #{ord.orderid}
+          td(class='fd-table__cell') #{ord.description}
+          td(class='fd-table__cell') #{ord.amount}

@@ -1,0 +1,35 @@
+doctype html
+html
+  head
+    meta(http-equiv='X-UA-Compatible' content='IE=edge')
+    meta(name='viewport' content='width=device-width, initial-scale=1')
+    title= title
+    script(src='/javascripts/main.js')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='//unpkg.com/fundamental-styles@0.7.0/dist/fundamental-styles.css')
+  body(class='fd-has-margin-none')
+    div(class='fd-shell fd-shell--fundamentals')
+      div(class='fd-shell__header')
+        div(class='shellbar')
+          div(class='fd-shellbar__group fd-shellbar__group--actions')
+            div(class='fd-shellbar__action')
+              div(class='fd-popover fd-popover--right')
+                div(class='fd-popover__control')
+                  div(class='fd-button fd-shellbar__button fd-user-menu__control fd-has-margin-tiny' aria-controls='userPopOver' aria-expanded='false' aria-haspopup='true' role='button' onclick='triggerUserPopOver()')
+                    span(class='fd-identifier fd-identifier--xs fd-identifier--circle sap-icon--account fd-has-background-color-accent-6')
+                div(class='fd-popover__body fd-popover__body--right' aria-hidden='true' id='userPopOver')
+                  div(class='fd-layout-grid fd-layout-grid--col-2 fd-has-margin-small')
+                    span User:
+                    span= userId
+                  div(class='fd-layout-grid fd-has-margin-small')
+                    span Name:
+                    span= user
+                  div(class='fd-popover__body-footer')    
+                    div(class='fd-bar fd-bar--footer')         
+                      div(class='fd-bar__right')
+                        div(class='fd-bar__element')
+                          button(class='fd-button fd-button--compact fd-button--emphasized' onclick='logout()') Logout
+      div(class='fd-shell__app')
+        div(class='fd-app')
+          main(class='fd-app__main fd-has-margin-small')
+            block content
