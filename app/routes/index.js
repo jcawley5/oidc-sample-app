@@ -5,8 +5,8 @@ const axios = require("axios");
 /* GET home page. */
 router.get("/", async function(req, res, next) {
   try {
-    const response = await axios.get(process.env.api_endpoint);
-    const orders = response.data;
+    const token = req.session.tokenSet.id_token;
+    const orders = await getOrders(token);
     const claimUser = `${req.session.tokenSet.claims.first_name} ${req.session.tokenSet.claims.last_name} `;
     const claimUserId = req.session.tokenSet.claims.sub;
     res.render("index", { user: claimUser, userId: claimUserId, title: "Orders", data: orders });
@@ -15,5 +15,19 @@ router.get("/", async function(req, res, next) {
     res.render("error", { message: "An error occurred", error: error });
   }
 });
+
+async function getOrders(token) {
+  try {
+    const AuthStr = "Bearer ".concat(token);
+    const response = await axios.get(process.env.api_endpoint, {
+      headers: {
+        Authorization: AuthStr
+      }
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
 
 module.exports = router;

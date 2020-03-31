@@ -1,0 +1,54 @@
+apiVersion: kubeless.io/v1beta1
+kind: Function
+metadata:
+  annotations:
+    function-size: XS
+  labels:
+    app: orders-list-api
+  name: orders-list-api
+spec:
+  checksum: ""
+  deployment:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: orders-list-api
+  deps: ""
+  function: |-
+    module.exports = { main: function (event, context) {
+        const {response} = event.extensions;
+        response.setHeader("Content-Type", "application/json");
+        return `[{"orderid": "00000001", "description": "First sample order", "amount": "100.00"},{"orderid": "00000002", "description": "Second sample order", "amount": "102.00"},{"orderid": "00000003", "description": "Third sample order", "amount": "402.00"}]`;
+    } }
+  function-content-type: text
+  handler: handler.main
+  horizontalPodAutoscaler:
+    metadata:
+      labels:
+        function: orders-list-api
+      name: orders-list-api
+    spec:
+      maxReplicas: 1
+      metrics:
+        - resource:
+            name: cpu
+            targetAverageUtilization: 50
+          type: Resource
+      minReplicas: 1
+      scaleTargetRef:
+        apiVersion: apps/v1beta1
+        kind: Deployment
+        name: orders-list-api
+  runtime: nodejs8
+  timeout: ""
+---
+apiVersion: gateway.kyma-project.io/v1alpha2
+kind: Api
+metadata:
+  name: orders-list-api
+spec:
+  hostname: orders-list-api
+  service:
+    name: orders-list-api
+    port: 8080
