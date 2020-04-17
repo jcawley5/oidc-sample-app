@@ -43,8 +43,8 @@ Verify that the change has taken place by using an incognito browser window or a
 
 Modify the .env to
 
-redirect_uris: https://oidc-sample-app.<cluster-name>/oauth/callback
-api_endpoint: http://orders-list-api.<namespace>.svc.cluster.local:8080
+- **redirect_uris:** `https://oidc-sample-app.<cluster-name>/oauth/callback`
+- **api_endpoint:** `http://orders-list-api.<namespace>.svc.cluster.local:8080`
 
 Create a config map from the .env file
 `kubectl create configmap oidc-sample-app-config -n <namespace> --from-env-file=.env`
