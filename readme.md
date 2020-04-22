@@ -1,3 +1,7 @@
+## Blog
+
+https://blogs.sap.com/2020/04/22/sap-cloud-platform-extension-factory-kyma-runtime-open-id-connect-authentication/
+
 ## Setup
 
 Clone the repository
