@@ -2,6 +2,9 @@
 
 https://blogs.sap.com/2020/04/22/sap-cloud-platform-extension-factory-kyma-runtime-open-id-connect-authentication/
 
+Change to use APIRules
+Need IDP Preset Configured
+
 ## Setup
 
 Clone the repository

@@ -66,14 +66,21 @@ spec:
                   name: oidc-sample-app-config
                   key: api_endpoint
 ---
-apiVersion: gateway.kyma-project.io/v1alpha2
-kind: Api
+apiVersion: gateway.kyma-project.io/v1alpha1
+kind: APIRule
 metadata:
   name: oidc-sample-app
-  labels:
-    app: oidc-sample-app
 spec:
-  hostname: oidc-sample-app
+  gateway: kyma-gateway.kyma-system.svc.cluster.local
+  rules:
+    - path: /.*
+      accessStrategies:
+        - config: {}
+          handler: noop
+      methods:
+        - GET
   service:
+    #host property to be removed... https://github.com/kyma-incubator/api-gateway/pull/95
+    host: oidc-sample-app.c-65dd678.kyma-dev.shoot.canary.k8s-hana.ondemand.com
     name: oidc-sample-app
     port: 80
