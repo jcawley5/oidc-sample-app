@@ -80,7 +80,6 @@ spec:
       methods:
         - GET
   service:
-    #host property to be removed... https://github.com/kyma-incubator/api-gateway/pull/95
-    host: oidc-sample-app.c-65dd678.kyma-dev.shoot.canary.k8s-hana.ondemand.com
+    host: oidc-sample-app
     name: oidc-sample-app
     port: 80

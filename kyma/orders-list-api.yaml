@@ -23,10 +23,15 @@ spec:
       accessStrategies:
         - config: {}
           handler: noop
+        # - handler: jwt
+        #   config:
+        #     trusted_issuers:
+        #       - https://<idp>
+        #     jwks_urls:
+        #       - https://<idp>/oauth2/certs
       methods:
         - GET
   service:
-    #host property to be removed... https://github.com/kyma-incubator/api-gateway/pull/95
-    host: orders-list-api.c-65dd678.kyma-dev.shoot.canary.k8s-hana.ondemand.com
+    host: orders-list-api
     name: orders-list-api
     port: 80
