@@ -2,9 +2,6 @@
 
 https://blogs.sap.com/2020/04/22/sap-cloud-platform-extension-factory-kyma-runtime-open-id-connect-authentication/
 
-Change to use APIRules
-Need IDP Preset Configured
-
 ## Setup
 
 Clone the repository
@@ -37,7 +34,7 @@ Run `npm start` which will expose the app at `http://localhost:3000`
 
 ### Scenario 2: Run secured app locally with secured API
 
-Open the namespace where the Kyma deployment was applied and choose the APIs menu option. Choose the `orders-list-api` and check the box the enable the `Secure API` option. Provide the following values and save the changes.
+Open the namespace where the Kyma deployment was applied and choose the API Rules menu option. Choose the `orders-list-api` and choose the edit option. Change the access strategies to use JWT, choose the default option and provide the following values and save the changes.
 
 - Issuers: `<SAP IAS Issuer>`
 - JWKS URI: `<SAP IAS Issuer>/oauth2/certs`
