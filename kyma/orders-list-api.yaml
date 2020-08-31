@@ -3,8 +3,6 @@ kind: Function
 metadata:
   name: orders-list-api
 spec:
-  functionContentType: plaintext
-  runtime: nodejs8
   source: |
     module.exports = { main: function (event, context) {
         const {response, request: {headers}} = event.extensions;
