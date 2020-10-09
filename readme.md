@@ -67,7 +67,7 @@ Modify the .env to
 - **redirect_uri:** `https://oidc-sample-app.<cluster-name>/oauth/callback`
 - **api_endpoint:** `http://orders-list-api.<namespace>.svc.cluster.local`
 
-Create a config map from the .env file - if using a service binding remove all but redirect_uri and api_endpoint
+Create a config map from the .env file - if using a service binding remove all but **redirect_uri**, **api_endpoint** and **token_endpoint_auth_method**
 `kubectl create configmap oidc-sample-app-config -n <namespace> --from-env-file=.env`
 
 Deploy the sample app using only values from config map
