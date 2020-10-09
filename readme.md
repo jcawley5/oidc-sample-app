@@ -10,6 +10,23 @@ Clone the repository
 
 Configure a SAP IAS application using open id connect.
 
+### Setup XSUAA
+
+Provision ***Authorization & Trust Management*** service as plan type ***application*** with parameter value:
+
+```yaml
+{
+  "oauth2-configuration": {
+    "redirect-uris": [
+      "https://oidc-sample-app.<cluster url>/oauth/callback"
+    ],
+    "token-validity": 900
+  },
+  "xsappname": "oidc-sample-app"
+}
+```
+binding service instance to app with prefix: ***idp_***
+
 ### Setup Kyma funtion
 
 Within the `kyma` directory
@@ -47,11 +64,14 @@ Verify that the change has taken place by using an incognito browser window or a
 
 Modify the .env to
 
-- **redirect_uris:** `https://oidc-sample-app.<cluster-name>/oauth/callback`
+- **redirect_uri:** `https://oidc-sample-app.<cluster-name>/oauth/callback`
 - **api_endpoint:** `http://orders-list-api.<namespace>.svc.cluster.local`
 
-Create a config map from the .env file
+Create a config map from the .env file - if using a service binding remove all but redirect_uri and api_endpoint
 `kubectl create configmap oidc-sample-app-config -n <namespace> --from-env-file=.env`
 
-Deploy the sample app
-`kubectl apply -f deployment.yaml -n <namespace>`
+Deploy the sample app using only values from config map
+`kubectl apply -f deployment-cm.yaml -n <namespace>`
+
+Deploy the sample app using config map and servicebinding
+`kubectl apply -f deployment-servicebinding.yaml -n <namespace>`

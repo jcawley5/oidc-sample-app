@@ -40,26 +40,26 @@ spec:
             - name: http
               containerPort: 3000
           env:
-            - name: client_id
+            - name: idp_clientid
               valueFrom:
                 configMapKeyRef:
                   name: oidc-sample-app-config
-                  key: client_id
-            - name: client_secret
+                  key: idp_clientid
+            - name: idp_clientsecret
               valueFrom:
                 configMapKeyRef:
                   name: oidc-sample-app-config
-                  key: client_secret
-            - name: redirect_uris
+                  key: idp_clientsecret
+            - name: idp_issuer
               valueFrom:
                 configMapKeyRef:
                   name: oidc-sample-app-config
-                  key: redirect_uris
-            - name: issuer
+                  key: idp_issuer
+            - name: redirect_uri
               valueFrom:
                 configMapKeyRef:
                   name: oidc-sample-app-config
-                  key: issuer
+                  key: redirect_uri
             - name: api_endpoint
               valueFrom:
                 configMapKeyRef:

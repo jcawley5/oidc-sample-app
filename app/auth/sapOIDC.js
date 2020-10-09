@@ -1,5 +1,5 @@
-const { Issuer } = require("openid-client");
-const { generators } = require("openid-client");
+const {Issuer} = require("openid-client");
+const {generators} = require("openid-client");
 
 var client,
   sapIssuer,
@@ -8,14 +8,21 @@ var client,
 async function initClient() {
   try {
     checkConfigParams();
-    sapIssuer = await Issuer.discover(process.env.issuer);
+    const issuerUrl = process.env.idp_url;
+    sapIssuer = await Issuer.discover(issuerUrl);
     console.log("Discovered issuer %s %O", sapIssuer.issuer, sapIssuer.metadata);
 
+    //token_endpoint_auth_method: client_secret_basic - may cause an issue due to the encoding of the client_secret
+    //if special characters exist
+    //xsuaa: client_secret_post
+    //sapias:client_secret_basic
+    //https://tools.ietf.org/html/rfc6749#section-2.3.1
     client = new sapIssuer.Client({
-      client_id: process.env.client_id,
-      client_secret: process.env.client_secret,
-      redirect_uris: [process.env.redirect_uris],
-      response_types: ["code"]
+      client_id: process.env.idp_clientid,
+      client_secret: process.env.idp_clientsecret,
+      redirect_uris: [process.env.redirect_uri],
+      response_types: ["code"],
+      token_endpoint_auth_method: process.env.token_endpoint_auth_method,
     });
 
     initialized = true;
@@ -30,14 +37,18 @@ function isReady() {
 }
 
 function checkConfigParams() {
+  console.log(process.env.idp_url);
+  console.log(process.env.idp_clientid);
+  console.log(process.env.idp_clientsecret);
+  console.log(process.env.redirect_uri);
   if (
-    process.env.issuer === undefined ||
-    process.env.client_id === undefined ||
-    process.env.client_secret === undefined ||
-    process.env.redirect_uris === undefined
+    process.env.idp_url === undefined ||
+    process.env.idp_clientid === undefined ||
+    process.env.idp_clientsecret === undefined ||
+    process.env.redirect_uri === undefined
   ) {
     const message =
-      "The OIDC configuration is missing one of the following parameters: issuer, client_id, client_secret, or redirect_uris";
+      "The OIDC configuration is missing one of the following parameters: idp_url, idp_clientid, idp_clientsecret, or redirect_uri";
     console.log(message);
     throw new Error(message);
   }
@@ -59,10 +70,8 @@ function isAuthenticated(req, res, next) {
   }
 
   if (isAuthRequired) {
-    const state = generators.random();
-    const authUrl = client.authorizationUrl({ state });
+    const authUrl = client.authorizationUrl({});
 
-    req.session.state = state;
     console.log("Calling authUrl: ", authUrl);
     req.session.returnTo = "/";
     res.redirect(authUrl);
@@ -73,20 +82,33 @@ function isAuthenticated(req, res, next) {
 
 function oAuthCallback(req, res, next) {
   const params = client.callbackParams(req);
-  const state = req.session.state;
-  client.callback(process.env.redirect_uris, params, { state }).then(
-    function(tokenSet) {
-      req.session.tokenSet = tokenSet;
-      req.session.tokenSet.claims = tokenSet.claims();
-      console.log(req.session.tokenSet);
-      res.redirect(req.session.returnTo || "/");
-      delete req.session.returnTo;
-    },
-    function(err) {
-      console.log("An error occured: ", err);
-      next(err);
-    }
-  );
+
+  client
+    .callback(
+      process.env.redirect_uri,
+      params,
+      {},
+      {
+        exchangeBody: {
+          client_id: process.env.client_id,
+          client_secret: process.env.client_secret,
+          scope: "openid",
+        },
+      }
+    )
+    .then(
+      function (tokenSet) {
+        req.session.tokenSet = tokenSet;
+        req.session.tokenSet.claims = tokenSet.claims();
+        console.log(req.session.tokenSet);
+        res.redirect(req.session.returnTo || "/");
+        delete req.session.returnTo;
+      },
+      function (err) {
+        console.log("An error occured: ", err);
+        next(err);
+      }
+    );
 }
 
 module.exports = {
@@ -94,5 +116,5 @@ module.exports = {
   getLogoutUrl,
   isAuthenticated,
   oAuthCallback,
-  isReady
+  isReady,
 };

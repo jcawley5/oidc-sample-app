@@ -19,15 +19,17 @@ app.set("view engine", "pug");
 
 app.use(logger("dev"));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+//using memory store for simplicity
+//for production use a caching service such as redis
 app.use(
   session({
     secret: "secret123456",
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
   })
 );
 
@@ -35,28 +37,28 @@ app.use(
 app.get("/oauth/callback", sapOIDC.oAuthCallback);
 
 //set routes to check auth...
-app.use("/", sapOIDC.isAuthenticated, function(req, res, next) {
+app.use("/", sapOIDC.isAuthenticated, function (req, res, next) {
   indexRouter(req, res, next);
 });
 
 //k8s health checks...
-app.use("/health", function(req, res, next) {
+app.use("/health", function (req, res, next) {
   healthRouter(req, res, next);
 });
 
-app.use("/logout", function(req, res, next) {
+app.use("/logout", function (req, res, next) {
   const logoutURL = sapOIDC.getLogoutUrl();
   req.session.destroy();
   res.redirect(logoutURL);
 });
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};

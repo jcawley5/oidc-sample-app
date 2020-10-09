@@ -6,13 +6,13 @@ const axios = require("axios");
 router.get("/", async function (req, res, next) {
   try {
     const token = req.session.tokenSet.id_token;
-    const claimUser = `${req.session.tokenSet.claims.first_name} ${req.session.tokenSet.claims.last_name} `;
+    const claimUser = req.session.tokenSet.claims.mail || req.session.tokenSet.claims.email;
     const claimUserId = req.session.tokenSet.claims.sub;
     const orders = await getOrders(token, claimUserId);
-    res.render("index", { user: claimUser, userId: claimUserId, title: "Orders", data: orders });
+    res.render("index", {user: claimUser, userId: claimUserId, title: "Orders", data: orders});
   } catch (error) {
     console.log(error);
-    res.render("error", { message: "An error occurred", error: error });
+    res.render("error", {message: "An error occurred", error: error});
   }
 });
 

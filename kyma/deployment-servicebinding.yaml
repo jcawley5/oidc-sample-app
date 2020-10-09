@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: oidc-sample-app
+  labels:
+    app: oidc-sample-app
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000
+      protocol: TCP
+  selector:
+    app: oidc-sample-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oidc-sample-app
+  labels:
+    app: oidc-sample-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oidc-sample-app
+  template:
+    metadata:
+      # annotations:
+      #   sidecar.istio.io/inject: "false"
+      labels:
+        app: oidc-sample-app
+    spec:
+      containers:
+        # replace the repository URL with your own repository (e.g. {DockerID}/oidc-sample-app:latest for Docker Hub).
+        - image: jcawley5/oidc-sample-app:latest
+          imagePullPolicy: Always
+          name: oidc-sample-app
+          ports:
+            - name: http
+              containerPort: 3000
+          env:
+            - name: redirect_uri
+              valueFrom:
+                configMapKeyRef:
+                  name: oidc-sample-app-config
+                  key: redirect_uri
+            - name: api_endpoint
+              valueFrom:
+                configMapKeyRef:
+                  name: oidc-sample-app-config
+                  key: api_endpoint
+---
+apiVersion: gateway.kyma-project.io/v1alpha1
+kind: APIRule
+metadata:
+  name: oidc-sample-app
+spec:
+  gateway: kyma-gateway.kyma-system.svc.cluster.local
+  rules:
+    - path: /.*
+      accessStrategies:
+        - config: {}
+          handler: noop
+      methods:
+        - GET
+  service:
+    host: oidc-sample-app
+    name: oidc-sample-app
+    port: 80
