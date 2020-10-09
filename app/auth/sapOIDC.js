@@ -22,10 +22,12 @@ async function initClient() {
       client_secret: process.env.idp_clientsecret,
       redirect_uris: [process.env.redirect_uri],
       response_types: ["code"],
-      token_endpoint_auth_method: process.env.token_endpoint_auth_method,
+      token_endpoint_auth_method: process.env.token_endpoint_auth_method || "client_secret_basic",
     });
 
     initialized = true;
+
+    console.log(client);
   } catch (error) {
     console.log(error);
     process.exit(1);
