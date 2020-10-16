@@ -50,6 +50,11 @@ spec:
                 configMapKeyRef:
                   name: oidc-sample-app-config
                   key: api_endpoint
+            - name: token_endpoint_auth_method
+              valueFrom:
+                configMapKeyRef:
+                  name: oidc-sample-app-config
+                  key: token_endpoint_auth_method
 ---
 apiVersion: gateway.kyma-project.io/v1alpha1
 kind: APIRule
